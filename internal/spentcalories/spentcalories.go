@@ -3,7 +3,6 @@ package spentcalories
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -101,19 +100,20 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	steps, activityType, duration, err := parseTraining(data)
 
 	if err != nil {
-
-		file, errOF := os.OpenFile("errors.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-
-		if errOF != nil {
-			return "", err
-		}
-
-		log.SetOutput(file)
-
 		log.Println(err)
+		/*
+			file, errOF := os.OpenFile("../errors.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 
-		defer file.Close()
+			if errOF != nil {
+				return "", err
+			}
 
+			log.SetOutput(file)
+
+			log.Println(err)
+
+			defer file.Close()
+		*/
 		return "", err
 	}
 

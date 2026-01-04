@@ -2,11 +2,12 @@ package daysteps
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
 
-	"go-sprint4-tracker/internal/spentcalories"
+	"github.com/Yandex-Practicum/tracker/internal/spentcalories"
 )
 
 const (
@@ -28,7 +29,8 @@ func parsePackage(data string) (int, time.Duration, error) {
 		return 0, 0, fmt.Errorf("Ошибка в формате входных данных")
 	}
 
-	steps, err := strconv.Atoi(strings.TrimSpace(arData[0]))
+	//steps, err := strconv.Atoi(strings.TrimSpace(arData[0]))
+	steps, err := strconv.Atoi(arData[0])
 
 	if err != nil {
 		return 0, 0, fmt.Errorf("Ошибка в количестве шагов: %v", err)
@@ -38,17 +40,17 @@ func parsePackage(data string) (int, time.Duration, error) {
 		return 0, 0, fmt.Errorf("Количество шагов должно быть больше нуля")
 	}
 
-	durationMinutes, err := time.ParseDuration(arData[1])
+	duration, err := time.ParseDuration(arData[1])
 
 	if err != nil {
 		return 0, 0, fmt.Errorf("Ошибка в продолжительности прогулки: %v", err)
 	}
 
-	if !(durationMinutes > 0) {
-		return 0, 0, fmt.Errorf("Продолжительность прогулки отрицательная: %v", durationMinutes)
+	if !(duration > 0) {
+		return 0, 0, fmt.Errorf("Продолжительность прогулки отрицательная: %v", duration)
 	}
 
-	return steps, durationMinutes, nil
+	return steps, duration, nil
 }
 
 // Разбирает входящую строку с шагами и длительностью прогулки, плюс дополнительно вес и рост пользователя
@@ -59,10 +61,23 @@ func parsePackage(data string) (int, time.Duration, error) {
 func DayActionInfo(data string, weight, height float64) string {
 	// TODO: реализовать функцию
 
-	steps, durationMinutes, err := parsePackage(data)
+	steps, duration, err := parsePackage(data)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
+
+		/*file, errOF := os.OpenFile("../errors.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+
+		if errOF != nil {
+			return ""
+		}
+
+		log.SetOutput(file)
+
+		log.Println("daysteps: ", err)
+
+		defer file.Close()/**/
+
 		return ""
 	}
 
@@ -77,11 +92,11 @@ func DayActionInfo(data string, weight, height float64) string {
 	distance /= mInKm
 
 	//рассчитываем количество калорий, потраченных на прогулку
-	calories, err := spentcalories.WalkingSpentCalories(steps, weight, height, durationMinutes)
+	calories, err := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
 
 	if err != nil {
 		return ""
 	}
 
-	return fmt.Sprintf("Количество шагов: %v.\nДистанция составила %v км.\nВы сожгли %v ккал.", steps, distance, calories)
+	return fmt.Sprintf("Количество шагов: %v.\nДистанция составила %0.2f км.\nВы сожгли %0.2f ккал.\n", steps, distance, calories)
 }
