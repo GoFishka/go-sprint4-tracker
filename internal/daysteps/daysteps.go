@@ -76,7 +76,8 @@ func DayActionInfo(data string, weight, height float64) string {
 
 		log.Println("daysteps: ", err)
 
-		defer file.Close()/**/
+		defer file.Close()
+		/**/
 
 		return ""
 	}
